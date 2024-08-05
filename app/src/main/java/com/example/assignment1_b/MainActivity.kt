@@ -1,14 +1,8 @@
 package com.example.assignment1_b
 
 import android.os.Bundle
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,16 +13,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editTextAmount: EditText
     private lateinit var buttonConvert: Button
     private lateinit var textViewResult: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
         spinner = findViewById(R.id.spinner)
         editTextAmount = findViewById(R.id.editTextAmount)
         buttonConvert = findViewById(R.id.buttonConvert)
         textViewResult = findViewById(R.id.textViewResult)
+        progressBar = findViewById(R.id.progressBar)
 
         // Set up Spinner with currency options
         val currencies = arrayOf("USD", "EUR", "GBP", "INR")
@@ -38,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnItemSelectedListener for Spinner
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: android.view.View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 // Perform action when an item is selected
             }
 
@@ -52,8 +47,10 @@ class MainActivity : AppCompatActivity() {
             val amount = editTextAmount.text.toString().toDoubleOrNull()
             if (amount != null) {
                 val selectedCurrency = spinner.selectedItem.toString()
+                showProgressBar()
                 val convertedAmount = convertCurrency(amount, selectedCurrency)
-                textViewResult.text = "Converted Amount: $convertedAmount $selectedCurrency"
+                hideProgressBar()
+                textViewResult.text = "Converted Amount: %.2f %s".format(convertedAmount, selectedCurrency)
             } else {
                 Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
             }
@@ -74,5 +71,13 @@ class MainActivity : AppCompatActivity() {
             "INR" -> amount * 56.27
             else -> amount
         }
+    }
+
+    private fun showProgressBar() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.GONE
     }
 }
